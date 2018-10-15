@@ -1,4 +1,4 @@
-#include <bitvector.h>
+#include <hv/common.h>
 #include <iostream>
 
 using namespace ::hv::common;

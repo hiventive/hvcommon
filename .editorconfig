@@ -10,7 +10,7 @@ indent_style = tab
 [Makefile]
 indent_style = tab
 
-[*.{diff,md,yml}]
+[*.{diff,md,yml,py}]
 indent_style = space
 indent_size = 4
 trim_trailing_whitespace = false

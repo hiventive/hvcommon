@@ -2,8 +2,8 @@ from conans import ConanFile, CMake, tools
 from conans.util import files
 import yaml
 
-class CommonConan(ConanFile):
-    name = "common"
+class HVCommonConan(ConanFile):
+    name = str(yaml.load(tools.load("settings.yml"))['conan']['name'])
     version = yaml.load(tools.load("settings.yml"))['project']['version']
     license = "MIT"
     author = "Hiventive"
@@ -14,33 +14,25 @@ class CommonConan(ConanFile):
     default_options = "shared=False", "fPIC=False", "fPIE=False"
     generators = "cmake"
     exports = "settings.yml"
-    exports_sources = "src/*", "CMakeLists.txt"
-    requires = "gtest/1.8.0@bincrafters/stable", \
+    exports_sources = "src/*", "CMakeLists.txt", "cmake/*"
+    requires = "gtest/1.8.0@hiventive/stable", \
                "spdlog/0.16.3@hiventive/stable", \
                "cci/1.0.0@hiventive/stable"
 
-    def build(self):
+    def _configure_cmake(self):
         cmake = CMake(self)
-        files.mkdir("build")
-        with tools.chdir("build"):
-            if self.settings.os != "Windows":
-                cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = self.options.fPIC or self.options.fPIE
-            cmake.configure(build_dir=".", source_dir="../")
-            cmake.build(build_dir=".")
-            cmake.install(build_dir=".")
+        if self.settings.os != "Windows":
+            cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = self.options.fPIC or self.options.fPIE
+        return cmake
 
-        # Explicit way:
-        # self.run('cmake %s/src %s' % (self.source_folder, cmake.command_line))
-        # self.run("cmake --build . %s" % cmake.build_config)
+    def build(self):
+        cmake = self._configure_cmake()
+        cmake.configure()
+        cmake.build()
 
     def package(self):
-        self.copy("HVCommon", dst="include", src="src")
-        self.copy("*.h", dst="include", src="src")
-        self.copy("*.lib", dst="lib", keep_path=False)
-        self.copy("*.dll", dst="bin", keep_path=False)
-        self.copy("*.dylib*", dst="lib", keep_path=False)
-        self.copy("*.so", dst="lib", keep_path=False)
-        self.copy("*.a", dst="lib", keep_path=False)
+        cmake = self._configure_cmake()
+        cmake.install()
 
     def package_info(self):
-        self.cpp_info.libs = ["common"]
+        self.cpp_info.libs = ["hvcommon"]

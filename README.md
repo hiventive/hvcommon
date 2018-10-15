@@ -1,4 +1,4 @@
-# Common
+# HVCommon
 
 ## Conan
    
@@ -11,7 +11,7 @@ conan create -tf tests/conan . hiventive/testing
 ### Push
 
 ```bash
-conan upload common/VERSION@hiventive/testing --all -r=hiventive
+conan upload hvcommon/VERSION@hiventive/testing --all -r=hiventive
 ```
 
 ## Logging levels

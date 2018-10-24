@@ -5,7 +5,6 @@ include(GNUInstallDirs)
 include(GenerateExportHeader)
 include(CMakePackageConfigHelpers)
 include(YAML)
-include(${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
 
 # Load settings
 yaml_parse("settings.yml" "HV")
@@ -14,6 +13,8 @@ option(ENABLE_CONAN "Enable Conan. This option is automatically set to ON if con
 option(ENABLE_GCOV "Enable code coverage with gcov" OFF)
 option(BUILD_TESTS "Enable tests build" OFF)
 option(BUILD_DOXYGEN "Build documentation" OFF)
+set(CONAN_PROFILE "default" CACHE STRING "Conan profile to use. Default value: default")
+set(CONAN_BUILD "missing" CACHE STRING "Conan dependencies build option. Default value: missing")
 
 # Hiventive
 set(HV_LIB_PREFIX hv)
@@ -60,17 +61,17 @@ set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 
 # Code coverage
 if(ENABLE_GCOV)
-	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
 		if(NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
-			message(WARNING "Debug mode must be activated to monitor code coverage.
+		    message(WARNING "Debug mode must be activated to monitor code coverage.
 Activating debug mode...")
-			set(CMAKE_BUILD_TYPE "Debug")
+		    set(CMAKE_BUILD_TYPE "Debug")
 		endif()
-		include(codecoverage) # Project must be defined before inclusion
-		APPEND_COVERAGE_COMPILER_FLAGS()
-	else()
-		message(FATAL_ERROR "Code coverage can only be activated with GCC or (Apple)Clang.")
-	endif()
+	    include(codecoverage) # Project must be defined before inclusion
+	    APPEND_COVERAGE_COMPILER_FLAGS()
+    else()
+        message(FATAL_ERROR "Code coverage can only be activated with GCC or (Apple)Clang.")
+    endif()
 endif()
 
 # Doxygen
@@ -96,9 +97,10 @@ if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake")
 else()
 	if(ENABLE_CONAN)
 		include(conan)
-		conan_cmake_run(CONANFILE ${CMAKE_CURRENT_SOURCE_DIR}/conanfile.py
-				BASIC_SETUP CMAKE_TARGETS
-				BUILD missing)
+		conan_cmake_run(CONANFILE conanfile.py
+				PROFILE ${CONAN_PROFILE}
+				BUILD ${CONAN_BUILD}
+				BUILD_TYPE "Release") # Profile will overwrite this value
 		set(HV_CONAN_AVAILABLE TRUE)
 	endif()
 endif()
@@ -107,17 +109,12 @@ if(HV_CONAN_AVAILABLE)
 endif()
 
 # Dependencies
-# HV_PROJECT_DEPENDENCIES format is : NAME VERSION REQUIRED CONFIG
-list(APPEND HV_PROJECT_DEPENDENCIES "Threads REQUIRED")
-if(MSVC AND MSVC_VERSION EQUAL 1700)
-	message(WARNING "SPDLog is unsupported with VS 2012.")
-else()
-	list(APPEND HV_PROJECT_DEPENDENCIES "spdlog 0.16.2 REQUIRED CONFIG")
-endif()
-list(APPEND HV_PROJECT_DEPENDENCIES "SystemCLanguage 2.3.2 REQUIRED CONFIG")
-list(APPEND HV_PROJECT_DEPENDENCIES "SystemCCCI 1.0.0 REQUIRED CONFIG")
+# ${PROJECT_NAME}_PROJECT_DEPENDENCIES format is : NAME VERSION REQUIRED CONFIG
+list(APPEND ${PROJECT_NAME}_PROJECT_DEPENDENCIES "Threads REQUIRED")
+list(APPEND ${PROJECT_NAME}_PROJECT_DEPENDENCIES "SystemCLanguage 2.3.2 REQUIRED CONFIG")
+list(APPEND ${PROJECT_NAME}_PROJECT_DEPENDENCIES "SystemCCCI 1.0.0 REQUIRED CONFIG")
 if(BUILD_TESTS)
-	list(APPEND HV_PROJECT_DEPENDENCIES "GTest 1.8.0 REQUIRED")
+	list(APPEND ${PROJECT_NAME}_PROJECT_DEPENDENCIES "GTest 1.8.0 REQUIRED")
 	# CMake FindGTest.cmake distributed with CMake defines targets GTest::GTest and GTest::Main
 	# GTest >= 1.8.1 provides a CMake CONFIG and defines targets GTest::gtest and GTest::gtest_main
 	# Provided CMake FindGTest.cmake defines targets GTest::gtest and GTest::gtest_main to unify names
@@ -128,14 +125,13 @@ if(BUILD_TESTS)
 endif()
 
 # Dependencies export
-foreach(PROJECT_DEPENDENCY ${HV_PROJECT_DEPENDENCIES})
+foreach(PROJECT_DEPENDENCY ${${PROJECT_NAME}_PROJECT_DEPENDENCIES})
 	string(REPLACE " " ";" PROJECT_DEPENDENCY_LIST ${PROJECT_DEPENDENCY})
 	find_package(${PROJECT_DEPENDENCY_LIST})
 	list(REMOVE_ITEM PROJECT_DEPENDENCY_LIST "REQUIRED")
 	string(REPLACE ";" " " EXPORT_PROJECT_DEPENDENCY "${PROJECT_DEPENDENCY_LIST}")
-	list(APPEND PROJECT_DEPENDENCIES ${EXPORT_PROJECT_DEPENDENCY})
+	list(APPEND EXPORT_${PROJECT_NAME}_PROJECT_DEPENDENCIES ${EXPORT_PROJECT_DEPENDENCY})
 endforeach()
-
 
 # If Release/Debug mode is not set, force _ITERATOR_DEBUG_LEVEL as Conan builds packages in Release/Debug mode
 if(NOT CMAKE_BUILD_TYPE)

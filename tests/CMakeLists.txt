@@ -1,16 +1,8 @@
 # Tests
-
 file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
 add_executable(${PROJECT_NAME_LOWER}-tests ${TEST_FILES})
 
-set(${PROJECT_NAME_LOWER}-LIBRARIES ${PROJECT_NAME_LOWER} GTest::gtest)
-
-# Disable SPDLog with VS 2012
-if(NOT (MSVC AND MSVC_VERSION EQUAL 1700))
-	list(APPEND ${PROJECT_NAME_LOWER}-LIBRARIES spdlog::spdlog)
-endif()
-
-target_link_libraries(${PROJECT_NAME_LOWER}-tests ${${PROJECT_NAME_LOWER}-LIBRARIES})
+target_link_libraries(${PROJECT_NAME_LOWER}-tests ${PROJECT_NAME_LOWER} GTest::gtest)
 
 add_test(NAME ${PROJECT_NAME}Tests COMMAND ${PROJECT_NAME_LOWER}-tests)

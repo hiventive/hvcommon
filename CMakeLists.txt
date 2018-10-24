@@ -5,7 +5,7 @@ include(GNUInstallDirs)
 include(GenerateExportHeader)
 include(CMakePackageConfigHelpers)
 include(YAML)
-include(${CMAKE_CURRENT_SOURCE_DIR}/conanbuildinfo.cmake)
+include(${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
 
 # Load settings
 yaml_parse("settings.yml" "HV")
@@ -31,8 +31,8 @@ project(${HV_PROJECT_NAME}
 		VERSION ${HV_PROJECT_VERSION}
 		LANGUAGES CXX)
 enable_language(C) # Fix CMake 3.1.0 (at least) thread issue
-string(TOLOWER ${CMAKE_PROJECT_NAME} CMAKE_PROJECT_NAME_LOWER)
-string(REPLACE ${HV_LIB_PREFIX} "" CMAKE_PROJECT_NAME_LOWER_WP ${CMAKE_PROJECT_NAME_LOWER})
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
+string(REPLACE ${HV_LIB_PREFIX} "" PROJECT_NAME_LOWER_WP ${PROJECT_NAME_LOWER})
 
 # CXX
 if(MSVC)
@@ -90,8 +90,8 @@ endif()
 
 # Conan
 set(HV_CONAN_AVAILABLE FALSE)
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/conanbuildinfo.cmake")
-	include(${CMAKE_CURRENT_SOURCE_DIR}/conanbuildinfo.cmake)
+if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake")
+	include(${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
 	set(HV_CONAN_AVAILABLE TRUE) # See ENABLE_CONAN option description
 else()
 	if(ENABLE_CONAN)

@@ -141,7 +141,6 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Library
-include_directories(src)
 add_subdirectory(src)
 
 # Tests

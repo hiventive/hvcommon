@@ -1,5 +1,5 @@
 # Tests
-file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+file(GLOB_RECURSE TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
 add_executable(${PROJECT_NAME_LOWER}-tests ${TEST_FILES})
 

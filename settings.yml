@@ -1,0 +1,10 @@
+# Settings
+
+project:
+  name: Common
+  version: 0.2.0
+
+conan:
+  name: common
+  channel: testing
+  username: hiventive

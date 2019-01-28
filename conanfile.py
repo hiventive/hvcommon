@@ -18,7 +18,7 @@ class HVCommonConan(ConanFile):
     exports_sources = "src/*", "CMakeLists.txt", "cmake/*"
     requires = "gtest/1.8.0@hiventive/stable", \
                "spdlog/[~0.16.3]@hiventive/stable", \
-               "cci/[~1.0.0]@hiventive/stable"
+               "cci/[>=1.0.0,<2]@hiventive/stable"
 
     def _configure_cmake(self):
         cmake = CMake(self)

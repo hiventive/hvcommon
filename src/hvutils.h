@@ -10,17 +10,17 @@
 #ifndef HVUTILS_H
 #define HVUTILS_H
 
-#include <cstdlib>
 #include <iostream>
 #include <sstream>
-#include <cstring>
-#include <ctime>
+#include <string>
 #include <functional>
 #include <type_traits>
 #include <utility>
 #include <algorithm>
 #include <cci_configuration>
+
 #include "datatypes.h"
+#include "log.h"
 
 /**
  * Determines the binary size of type T
@@ -65,18 +65,29 @@
 #define HV_ABS(x) ( (x) < (0) ? (-x) : (x) )
 
 /**
- * Macro for assertions (temporary)
+ * Macros to exit and abort
+ */
+#define HV_EXIT_FAILURE() exit(EXIT_FAILURE)
+#define HV_ABORT() abort()
+
+/**
+ * Macro for assertions
  */
 
 #ifndef NDEBUG
-#define HV_ERR(m) std::cerr << "Error: " << m << std::endl; exit(EXIT_FAILURE);
-#define HV_WARN(m) std::cerr << "Warning: " << m << std::endl;
-#define HV_ASSERT(x,m) if (!(x)) {HV_ERR(m)}
+#define HV_ASSERT(x,...) if (!(x)) { \
+	HV_LOG_ERROR(__VA_ARGS__); \
+	HV_EXIT_FAILURE(); \
+}
 #else
-#define HV_ERR(m)
-#define HV_WARN(m)
-#define HV_ASSERT(x,m)
+#define HV_ASSERT(x,...)
 #endif
+
+/**
+ * Backward compatibility // TODO: REMOVE ME
+ */
+#define HV_ERR(m) HV_LOG_ERROR(m); HV_EXIT_FAILURE();
+#define HV_WARN(m) HV_LOG_WARNING(m);
 
 //** CPP MACROS **//
 /**
@@ -137,8 +148,8 @@ template<typename T, std::size_t BIT_WIDTH> std::string toBinStr(const T &src) {
 template<typename T> T superiorPowerOf2(const T& in) {
 	// Finding x = floor(log2(in))
 	if (in == static_cast<T>(0)) {
-		HV_ERR("0 is an invalid input")
-		exit(EXIT_FAILURE);
+		HV_LOG_ERROR("0 is an invalid input");
+		HV_EXIT_FAILURE();
 	}
 	if (in == static_cast<T>(1))
 		return static_cast<T>(1);

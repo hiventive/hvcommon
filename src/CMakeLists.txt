@@ -7,7 +7,11 @@ set_target_properties(${PROJECT_NAME_LOWER} PROPERTIES
 		VERSION ${${PROJECT_NAME}_VERSION}
 		EXPORT_NAME ${PROJECT_NAME_LOWER_WP})
 
-target_link_libraries(${PROJECT_NAME_LOWER} SystemC::systemc SystemC::cci)
+if(WIN32)
+	target_link_libraries(${PROJECT_NAME_LOWER} fmt::fmt SystemC::systemc SystemC::cci)
+else()
+	target_link_libraries(${PROJECT_NAME_LOWER} spdlog::spdlog SystemC::systemc SystemC::cci)
+endif()
 target_include_directories(${PROJECT_NAME_LOWER} PUBLIC
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
 		"$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")

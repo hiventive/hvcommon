@@ -17,7 +17,7 @@
 #include "common/datatypes.h"
 #include "common/fifo.h"
 #include "common/filtered_range.h"
-#include "common/hvlog.h"
+#include "common/log.h"
 #include "common/hvutils.h"
 #include "common/texttable.h"
 

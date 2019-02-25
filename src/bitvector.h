@@ -871,7 +871,8 @@ template<typename T> void BitVector::setData(const T &src) {
 
 template<typename T, bool COMP> void BitVector::_setData(
 		dataHandleHelper<T, COMP>, const T &src) {
-	HV_ERR("This function should not have been generated")
+	HV_LOG_ERROR("This function should not have been generated");
+	HV_EXIT_FAILURE();
 }
 
 template<typename T> void BitVector::_setData(dataHandleHelper<T, true>,
@@ -906,7 +907,8 @@ template<typename T> T BitVector::getData() const {
 
 template<typename T, bool COMP> T BitVector::_getData(
 		dataHandleHelper<T, COMP>) const {
-	HV_ERR("This function should not have been generated")
+	HV_LOG_ERROR("This function should not have been generated");
+	HV_EXIT_FAILURE();
 	return T(0);
 }
 

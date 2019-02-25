@@ -64,7 +64,8 @@ template<typename T, std::size_t SIZE> class FIFO {
 				nElem--;
 				return ret;
 			} else {
-				HV_ERR("FIFO empty. Consider checking emptiness before popping")
+				HV_LOG_ERROR("FIFO empty. Consider checking emptiness before popping");
+				HV_EXIT_FAILURE();
 				return T(0);
 			}
 		}

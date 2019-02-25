@@ -17,7 +17,6 @@ class HVCommonConan(ConanFile):
     exports = "settings.yml"
     exports_sources = "src/*", "CMakeLists.txt", "cmake/*"
     requires = "gtest/1.8.0@hiventive/stable", \
-               "spdlog/[~0.16.3]@hiventive/stable", \
                "cci/[>=1.0.0,<2]@hiventive/stable"
 
     def _configure_cmake(self):
@@ -25,6 +24,12 @@ class HVCommonConan(ConanFile):
         if self.settings.os != "Windows":
             cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = self.options.fPIC or self.options.fPIE
         return cmake
+
+    def requirements(self):
+        if self.settings.os == "Windows":
+            self.requires("fmt/[>=4.1.0,<5]@bincrafters/stable")
+        else:
+            self.requires("spdlog/[>=1.3.0,<2]@hiventive/stable")
 
     def build(self):
         cmake = self._configure_cmake()

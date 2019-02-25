@@ -619,7 +619,7 @@ BitVector BitVector::operator ()(const bvsize_t &ind1, const bvsize_t &ind2) {
 	bvsize_t ind2Tmp = ind1SupInd2 ? ind1 : ind2;
 	// We now are sure that ind1Tmp <= ind2Tmp
 	HV_ASSERT((0u <= ind1Tmp) && (ind2Tmp < binSize),
-			"Index out of scope (" << ind1Tmp << "," << ind2Tmp << ") is not in (0," << (binSize - 1u) << ")");
+			"Index out of scope ({},{}) is not in (0,{})", ind1Tmp, ind2Tmp, (binSize - 1u));
 	return BitVector(ind2Tmp - ind1Tmp + static_cast<bvsize_t>(1u),
 			this->operator >>(ind1Tmp), this, ind1Tmp, ind2Tmp);
 
@@ -632,19 +632,19 @@ BitVector BitVector::operator ()(const bvsize_t &ind1,
 	bvsize_t ind2Tmp = ind1SupInd2 ? ind1 : ind2;
 	// We now are sure that ind1Tmp <= ind2Tmp
 	HV_ASSERT((0u <= ind1Tmp) && (ind2Tmp < binSize),
-			"Index out of scope (" << ind1Tmp << "," << ind2Tmp << ") is not in (0," << (binSize - 1u) << ")");
+			"Index out of scope ({},{}) is not in (0,{})", ind1Tmp, ind2Tmp, (binSize - 1u));
 	return BitVector(ind2Tmp - ind1Tmp + 1u, this->operator >>(ind1Tmp));
 }
 
 BitVector BitVector::operator [](const bvsize_t &ind) {
 	HV_ASSERT((0u <= ind) && (ind < binSize),
-			"Index out of scope (" << ind << ") is not in (0," << (binSize - 1u) << ")");
+			"Index out of scope ({}) is not in (0,{})", ind, (binSize - 1u));
 	return BitVector(1u, this->operator >>(ind), this, ind, ind);
 }
 
 BitVector BitVector::operator [](const bvsize_t &ind) const {
 	HV_ASSERT((0u <= ind) && (ind < binSize),
-			"Index out of scope (" << ind << ") is not in (0," << (binSize - 1u) << ")");
+			"Index out of scope ({}) is not in (0,{})", ind, (binSize - 1u));
 	return BitVector(1u, this->operator >>(ind));
 }
 
@@ -756,8 +756,8 @@ BitVector BitVector::strip() const {
 
 void BitVector::resize(bvsize_t newSize) {
 	if (parent != nullptr) {
-		HV_ERR("You can't resize a BitVector which has a parent")
-		exit(EXIT_FAILURE);
+		HV_LOG_ERROR("You can't resize a BitVector which has a parent");
+		HV_EXIT_FAILURE();
 	}
 	bvsize_t newArraySize = HV_BV_ARRAY_SIZE(newSize);
 	lowIndex = 0u;

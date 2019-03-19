@@ -86,8 +86,8 @@
 /**
  * Backward compatibility // TODO: REMOVE ME
  */
-#define HV_ERR(m) HV_LOG_WARNING("HV_ERR is deprecated, use HV_LOG_ERROR instead."); HV_LOG_ERROR(m); HV_EXIT_FAILURE();
-#define HV_WARN(m) HV_LOG_WARNING("HV_WARN is deprecated, use HV_LOG_WARNING instead."); HV_LOG_WARNING(m);
+#define HV_ERR(m) HV_LOG_WARNING("HV_ERR is deprecated, use HV_LOG_ERROR instead."); std::cerr << m << std::endl; HV_EXIT_FAILURE();
+#define HV_WARN(m) HV_LOG_WARNING("HV_WARN is deprecated, use HV_LOG_WARNING instead."); std::cout << m << std::endl;
 
 //** CPP MACROS **//
 /**

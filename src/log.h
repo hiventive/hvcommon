@@ -91,12 +91,12 @@ std::shared_ptr<spdlog::logger> _getMainLogger();
 		#define HV_LOG_WARNING(...) 		(void)0
     #endif
 	#if HV_LOG_ACTIVE_LEVEL <= HV_LOG_LEVEL_ERROR
-		#define HV_LOG_ERROR(...) 			std::cout << fmt::format(__VA_ARGS__) << std::endl;
+		#define HV_LOG_ERROR(...) 			std::cout << fmt::format(__VA_ARGS__) << std::endl
 	#else
 		#define HV_LOG_ERROR(...) 			(void)0
     #endif
 	#if HV_LOG_ACTIVE_LEVEL <= HV_LOG_LEVEL_CRITICAL
-		#define HV_LOG_CRITICAL(...) 		std::cout << fmt::format(__VA_ARGS__) << std::endl;
+		#define HV_LOG_CRITICAL(...) 		std::cout << fmt::format(__VA_ARGS__) << std::endl
 	#else
 		#define HV_LOG_CRITICAL(...) 		(void)0
 	#endif

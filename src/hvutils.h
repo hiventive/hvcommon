@@ -77,7 +77,7 @@
 #ifndef NDEBUG
 #define HV_ASSERT(x,...) if (!(x)) { \
 	HV_LOG_ERROR(__VA_ARGS__); \
-	HV_EXIT_FAILURE(); \
+	HV_EXIT_FAILURE() \
 }
 #else
 #define HV_ASSERT(x,...)

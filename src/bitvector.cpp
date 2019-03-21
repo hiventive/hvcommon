@@ -812,7 +812,7 @@ void BitVector::resize(bvsize_t newSize) {
 
 void BitVector::instantiationChecks(const bvsize_t &size) {
 	// Checking size and switching to dynamic if needed
-	HV_ASSERT(size > 0, "BitVector size must be > 0")
+	HV_ASSERT(size > 0, "BitVector size must be > 0");
 	if (size > HV_BV_MAX_STATIC_BITWIDTH) {
 		data = (bvdata_t*) malloc(arraySize * sizeof(bvdata_t));
 		if (data == nullptr) {

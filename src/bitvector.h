@@ -888,7 +888,7 @@ template<typename T> void BitVector::_setData(dataHandleHelper<T, true>,
 template<typename T> void BitVector::_setData(dataHandleHelper<T, false>,
 		const T &src) {
 	HV_ASSERT(!(sizeof(T) % sizeof(bvsize_t)),
-			"Size of source has to be a multiple of bvdata_t")
+			"Size of source has to be a multiple of bvdata_t");
 	const bvsize_t HOW_BIGGER = sizeof(T) / sizeof(bvdata_t);
 	T srcTmp(src);
 	bvsize_t cpt;
@@ -922,7 +922,7 @@ template<typename T> T BitVector::_getData(dataHandleHelper<T, true>) const {
 
 template<typename T> T BitVector::_getData(dataHandleHelper<T, false>) const {
 	HV_ASSERT(!(sizeof(T) % sizeof(bvsize_t)),
-			"Size of source has to be a multiple of bvsize_t")
+			"Size of source has to be a multiple of bvsize_t");
 	T ret(0u);
 	const bvsize_t HOW_BIGGER = sizeof(T) / sizeof(bvdata_t);
 	for (bvsize_t i = 0u; (i < arraySize) && (i < HOW_BIGGER); i++) {

@@ -14,6 +14,7 @@
 
 #include "common/bitvector.h"
 #include "common/callback.h"
+#include "common/cplusplus.h"
 #include "common/datatypes.h"
 #include "common/fifo.h"
 #include "common/filtered_range.h"

@@ -9,11 +9,8 @@
 
 #if defined(_MSC_VER) && _MSC_VER <= 1700
   #define HV_CPLUSPLUS_MEMBER_FUNCTION_DEFAULT {}
-  #define HV_CPLUSPLUS_MEMBER_FUNCTION_DELETE ; \
-  	#error __FILE__ __LINE__  " This method is deleted."
+  #define HV_CPLUSPLUS_MEMBER_FUNCTION_DELETE {std::cerr << "This method is deleted" << std::endl; exit(EXIT_FAILURE);}
 #else
   #define HV_CPLUSPLUS_MEMBER_FUNCTION_DEFAULT = default
   #define HV_CPLUSPLUS_MEMBER_FUNCTION_DELETE = delete
 #endif
-
-

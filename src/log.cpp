@@ -22,6 +22,11 @@ namespace common {
 
 #if !defined(_WIN32) // FIXME: should be !(defined(_MSC_VER) && _MSC_VER < 1900), but there is a conflict with operator | and SPDLog with VS2015/2017
 std::shared_ptr<spdlog::logger> _getMainLogger() {
+	static bool initialized = false;
+	if(!initialized) {
+		_hvLogger->set_level(spdlog::level::warn);
+		initialized = true;
+	}
 	return _hvLogger;
 }
 #endif

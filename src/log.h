@@ -79,12 +79,37 @@ std::shared_ptr<spdlog::logger> _getMainLogger();
  */
 
 #if !defined(_WIN32) // FIXME: should be !(defined(_MSC_VER) && _MSC_VER < 1900), but there is a conflict with operator | and SPDLog with VS2015/2017
-	#define HV_LOG_TRACE(...) 		SPDLOG_LOGGER_CALL(hv::common::_getMainLogger(), spdlog::level::trace, __VA_ARGS__)
-	#define HV_LOG_DEBUG(...) 		SPDLOG_LOGGER_CALL(hv::common::_getMainLogger(), spdlog::level::debug, __VA_ARGS__)
-	#define HV_LOG_INFO(...) 		SPDLOG_LOGGER_CALL(hv::common::_getMainLogger(), spdlog::level::info, __VA_ARGS__)
-	#define HV_LOG_WARNING(...) 	SPDLOG_LOGGER_CALL(hv::common::_getMainLogger(), spdlog::level::warn, __VA_ARGS__)
-	#define HV_LOG_ERROR(...) 		SPDLOG_LOGGER_CALL(hv::common::_getMainLogger(), spdlog::level::err, __VA_ARGS__)
-	#define HV_LOG_CRITICAL(...) 	SPDLOG_LOGGER_CALL(hv::common::_getMainLogger(), spdlog::level::critical, __VA_ARGS__)
+	#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
+		#define HV_LOG_TRACE(...) 			SPDLOG_LOGGER_CALL(hv::common::_getMainLogger(), spdlog::level::trace, __VA_ARGS__)
+	#else
+		#define HV_LOG_TRACE(...) 			(void)0
+	#endif
+	#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_DEBUG
+		#define HV_LOG_DEBUG(...) 			SPDLOG_LOGGER_CALL(hv::common::_getMainLogger(), spdlog::level::debug, __VA_ARGS__)
+	#else
+		#define HV_LOG_DEBUG(...) 			(void)0
+	#endif
+	#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_INFO
+		#define HV_LOG_INFO(...) 			SPDLOG_LOGGER_CALL(hv::common::_getMainLogger(), spdlog::level::info, __VA_ARGS__)
+	#else
+		#define HV_LOG_INFO(...) 			(void)0
+	#endif
+	#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_WARN
+		#define HV_LOG_WARNING(...) 		SPDLOG_LOGGER_CALL(hv::common::_getMainLogger(), spdlog::level::warn, __VA_ARGS__)
+	#else
+		#define HV_LOG_WARNING(...) 		(void)0
+	#endif
+	#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_ERROR
+		#define HV_LOG_ERROR(...) 			SPDLOG_LOGGER_CALL(hv::common::_getMainLogger(), spdlog::level::err, __VA_ARGS__)
+	#else
+		#define HV_LOG_ERROR(...) 			(void)0
+	#endif
+	#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
+		#define HV_LOG_CRITICAL(...) 		SPDLOG_LOGGER_CALL(hv::common::_getMainLogger(), spdlog::level::critical, __VA_ARGS__)
+	#else
+		#define HV_LOG_CRITICAL(...) 		(void)0
+	#endif
+
 #else
 	#if HV_LOG_ACTIVE_LEVEL <= HV_LOG_LEVEL_TRACE
 		#define HV_LOG_TRACE(...) 			std::cout << fmt::format(__VA_ARGS__) << std::endl

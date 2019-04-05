@@ -9,7 +9,8 @@
 
 #if defined(_MSC_VER) && _MSC_VER <= 1700
   #define HV_CPLUSPLUS_MEMBER_FUNCTION_DEFAULT {}
-  #define HV_CPLUSPLUS_MEMBER_FUNCTION_DELETE
+  #define HV_CPLUSPLUS_MEMBER_FUNCTION_DELETE ; \
+  	#error __FILE__ __LINE__  " This method is deleted."
 #else
   #define HV_CPLUSPLUS_MEMBER_FUNCTION_DEFAULT = default
   #define HV_CPLUSPLUS_MEMBER_FUNCTION_DELETE = delete

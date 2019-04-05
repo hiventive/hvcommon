@@ -11,4 +11,6 @@ add_executable(${PROJECT_NAME_LOWER}-tests ${TEST_FILES})
 
 target_link_libraries(${PROJECT_NAME_LOWER}-tests ${PROJECT_NAME_LOWER} GTest::gtest)
 
+target_compile_definitions(${PROJECT_NAME_LOWER}-tests PRIVATE HV_LOG_ACTIVE_LEVEL=HV_LOG_LEVEL_TRACE)
+
 add_test(NAME ${PROJECT_NAME}Tests COMMAND ${PROJECT_NAME_LOWER}-tests)

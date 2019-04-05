@@ -12,6 +12,11 @@
 
 #include "log-level.h"
 
+#define HV_LOG_STR(x) #x
+#define HV_LOG_XSTR(x) HV_LOG_STR(x)
+#define HV_LOG_DEFER(M,...) M(__VA_ARGS__)
+#define HV_LOG_CONCATENATE(x, y) x ## y
+
 // Disable logger time
 #ifdef HV_LOG_DISABLE_CLOCK
 #define SPDLOG_NO_DATETIME
@@ -24,15 +29,26 @@
 
 // Log levels
 #if !defined(HV_LOG_ACTIVE_LEVEL)
-#define HV_LOG_ACTIVE_LEVEL HV_LOG_LEVEL_WARNING // Default log level
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_WARN // Default log level: warning
+#else
+#if HV_LOG_ACTIVE_LEVEL == HV_LOG_LEVEL_TRACE
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#elif HV_LOG_ACTIVE_LEVEL == HV_LOG_LEVEL_DEBUG
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
+#elif HV_LOG_ACTIVE_LEVEL == HV_LOG_LEVEL_INFO
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
+#elif HV_LOG_ACTIVE_LEVEL == HV_LOG_LEVEL_WARNING
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_WARN
+#elif HV_LOG_ACTIVE_LEVEL == HV_LOG_LEVEL_ERROR
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_ERROR
+#elif HV_LOG_ACTIVE_LEVEL == HV_LOG_LEVEL_CRITICAL
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_CRITICAL
+#elif HV_LOG_ACTIVE_LEVEL == HV_LOG_LEVEL_OFF
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_OFF
+#else
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_WARN
 #endif
-
-#define HV_LOG_STR(x) #x
-#define HV_LOG_XSTR(x) HV_LOG_STR(x)
-#define HV_LOG_DEFER(M,...) M(__VA_ARGS__)
-#define HV_LOG_CONCATENATE(x, y) x ## y
-
-#define SPDLOG_ACTIVE_LEVEL HV_LOG_CONCATENATE(, HV_LOG_ACTIVE_LEVEL)
+#endif
 
 #if !defined(_WIN32) // FIXME: should be !(defined(_MSC_VER) && _MSC_VER < 1900), but there is a conflict with operator | and SPDLog with VS2015/2017
 #include <spdlog/spdlog.h>

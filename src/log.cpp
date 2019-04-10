@@ -11,7 +11,7 @@
 
 #if !defined(_WIN32)
 // Private console logger with color
-static auto _hvLogger = spdlog::stdout_color_mt("console");
+static auto _hvLogger = spdlog::stdout_color_mt("global");
 /* #elif !(defined(_MSC_VER) && _MSC_VER < 1900)
 // Private color console is bugged with some consoles on Windows
 auto _hvLogger = spdlog::stdout_logger_mt("console"); */

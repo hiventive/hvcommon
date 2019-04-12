@@ -2,7 +2,7 @@
 
 project:
   name: HVCommon
-  version: 0.3.1
+  version: 0.3.2
 
 conan:
   name: hvcommon

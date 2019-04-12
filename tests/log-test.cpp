@@ -15,6 +15,7 @@ template<typename T> class HVLogTest: public ::testing::Test {
 };
 
 TEST(HVLogText, generalTest) {
+	hv::common::setLogLevel(hv::common::log::debug);
 	HV_LOG_CRITICAL("This is a critical error log");
 	HV_LOG_ERROR("This is an error log");
 	HV_LOG_WARNING("This is a warning log");

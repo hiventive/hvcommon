@@ -109,7 +109,6 @@ std::shared_ptr<spdlog::logger> _getMainLogger();
 	#else
 		#define HV_LOG_CRITICAL(...) 		(void)0
 	#endif
-
 #else
 	#if HV_LOG_ACTIVE_LEVEL <= HV_LOG_LEVEL_TRACE
 		#define HV_LOG_TRACE(...) 			std::cout << fmt::format(__VA_ARGS__) << std::endl
@@ -143,8 +142,6 @@ std::shared_ptr<spdlog::logger> _getMainLogger();
 	#endif
 #endif
 
-// FIXME
-/*
 namespace log {
 	enum LogLevel
 	{
@@ -158,28 +155,7 @@ namespace log {
 	};
 }
 
-void setLogFile(std::string filepath) {
-	_hvLogger = spdlog::basic_logger_mt("basic_logger", filepath);
-}
-
-void setLogLevel(enum log::LogLevel logLevel) {
-	switch(logLevel) {
-		case log::trace:
-			_hvLogger->set_level(spdlog::level::trace);
-		case log::debug:
-			_hvLogger->set_level(spdlog::level::debug);
-		case log::info:
-			_hvLogger->set_level(spdlog::level::info);
-		case log::warning:
-			_hvLogger->set_level(spdlog::level::warn);
-		case log::error:
-			_hvLogger->set_level(spdlog::level::err);
-		case log::critical:
-			_hvLogger->set_level(spdlog::level::critical);
-		case log::off:
-			_hvLogger->set_level(spdlog::level::off);
-	}
-} */
+void setLogLevel(enum log::LogLevel logLevel);
 
 } // namespace common
 } // namespace hv

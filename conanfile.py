@@ -9,7 +9,7 @@ class HVCommonConan(ConanFile):
     author = "Hiventive"
     url = "https://github.com/hiventive/hvcommon"
     description = "Common utils"
-    settings = "cppstd", "os", "compiler", "build_type", "arch"
+    settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "fPIC": [True, False], "fPIE": [True, False]}
     default_options = "shared=False", "fPIC=False", "fPIE=False"
     generators = "cmake"

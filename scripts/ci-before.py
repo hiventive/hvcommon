@@ -11,7 +11,6 @@ import platform
 import yaml
 from conan.packager import ConanMultiPackager
 
-cppStd = 11
 conanRemotes = [("https://conan.hiventive.com", True, "hiventive"),
 				("https://api.bintray.com/conan/bincrafters/public-conan", True, "bincrafters")]
 envVars = []
@@ -43,10 +42,6 @@ def printDependenciesVersion():
 		runCommand("$CXX --version")
 	runCommand("cmake --version")
 	runCommand("conan --version")
-	if platform.system() == "Windows":
-		runCommand('powershell -Command "$env:CONAN_USER_HOME=\'' + getConanSourceUserHome() + '\'; conan profile show default"')
-	else:
-		runCommand("CONAN_USER_HOME=" + getConanSourceUserHome() + " conan profile show default")
 
 def cleanConanTesting():
 	conanUserHome = os.path.join(dirname(dirname(abspath(__file__))), ".conan")
@@ -58,6 +53,12 @@ def cleanConanTesting():
 			packageDir = os.path.dirname(os.path.dirname(os.path.dirname(root)))
 			shutil.rmtree(packageDir)
 			print(packageDir + " removed")
+
+def printConanProfile(profile = "default"):
+	if platform.system() == "Windows":
+		runCommand('powershell -Command "conan profile show ' + profile + '"')
+	else:
+		runCommand("conan profile show default")
 
 def setupConan(local):
 	conanSourceUserHome = getConanSourceUserHome()
@@ -72,6 +73,13 @@ def setupConan(local):
 	with open(os.devnull, 'w') as devnull:
 		cmp = ConanMultiPackager(out=devnull.write, remotes=conanRemotes)
 		cmp.remotes_manager.add_remotes_to_conan()
+	if platform.system() == "Linux":
+		if "CONAN_SETTINGS_COMPILER_CPPSTD" in os.environ:
+		    conanUpdateProfile("settings.compiler.cppstd", str(os.environ["CONAN_SETTINGS_COMPILER_CPPSTD"]))
+		if "CONAN_SETTINGS_COMPILER_LIBCXX" in os.environ:
+		    conanUpdateProfile("settings.compiler.libcxx", str(os.environ["CONAN_SETTINGS_COMPILER_LIBCXX"]))
+	if platform.system() == "Windows" and "VISUAL_STUDIO_TOOLSET" in os.environ:
+		conanUpdateProfile("settings.compiler.toolset", str(os.environ["VISUAL_STUDIO_TOOLSET"]))
 
 def getConanSourceUserHome():
 	homeDir = expanduser("~")
@@ -95,19 +103,17 @@ def setupConanEnv(local):
 	projectVersion = next((item for item in envVars if item[0] == 'PROJECT_VERSION'), None)
 	if conanName and projectVersion:
 		conanEnv.append(["CONAN_REFERENCE", conanName[1] + '/' + projectVersion[1]])
-	if platform.system() == "Linux":
-		conanEnv.append(["CONAN_ENV_CPPSTD", str(cppStd)])
-		conanEnv.append(["CONAN_ENV_COMPILER_LIBCXX", "libstdc++11"])
-	if platform.system() == "Windows" and "VISUAL_STUDIO_TOOLSET" in os.environ:
-		conanEnv.append(["CONAN_ENV_COMPILER_TOOLSET", os.environ["VISUAL_STUDIO_TOOLSET"]])
 	return conanEnv
+
+def conanUpdateProfile(key, value, profile = "default"):
+	runCommand("conan profile update " + key + '="' + value + '" ' + profile)
 
 def setupSettingsEnv():
 	settingsEnv = []
 	if os.path.exists("settings.yml"):
 		with open("settings.yml", 'r') as settingesFile:
 			try:
-				settings = yaml.load(settingesFile)
+				settings = yaml.safe_load(settingesFile)
 				def toEnv(d, root=''):
 					for k, v in d.items():
 						if isinstance(v, dict):
@@ -127,13 +133,14 @@ def setupEnv(local):
 	envVars.extend(setupConanEnv(local))
 	for envVar in envVars:
 		if platform.system() == "Windows":
-			print('$Env:' + envVar[0] + ' = "' + envVar[1] + '"')
+			print('$Env:' + str(envVar[0]) + ' = "' + str(envVar[1]) + '"')
 		else:
-			print("export " + envVar[0] + "=" + envVar[1])
+			print("export " + str(envVar[0]) + "=" + str(envVar[1]))
 
 def init(local):
 	printDependenciesVersion()
 	setupConan(local)
+	printConanProfile()
 
 parser = argparse.ArgumentParser(description="CI Before Script")
 parser.add_argument('command', help='Command to run')

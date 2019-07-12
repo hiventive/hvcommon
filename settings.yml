@@ -8,3 +8,7 @@ conan:
   name: hvcommon
   channel: testing
   username: hiventive
+  settings:
+    compiler:
+      cppstd: 11
+      libcxx: libc++11

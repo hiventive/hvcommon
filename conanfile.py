@@ -3,8 +3,8 @@ from conans.util import files
 import yaml
 
 class HVCommonConan(ConanFile):
-    name = str(yaml.load(tools.load("settings.yml"))['conan']['name'])
-    version = yaml.load(tools.load("settings.yml"))['project']['version']
+    name = str(yaml.safe_load(tools.load("settings.yml"))['conan']['name'])
+    version = yaml.safe_load(tools.load("settings.yml"))['project']['version']
     license = "MIT"
     author = "Hiventive"
     url = "https://github.com/hiventive/hvcommon"

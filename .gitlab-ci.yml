@@ -15,14 +15,14 @@ stages:
 .build_unix_make: &build_unix_make
   stage: build
   before_script:
-    - "`python3 scripts/ci-before.py setup-env`"
-    -  python3 scripts/ci-before.py init
-    -  python3 scripts/ci-before.py clean-conan-testing
+    - "`python3 scripts/ci.py setup-env`"
+    -  python3 scripts/ci.py init
+    -  python3 scripts/ci.py clean-conan-testing
   script:
     - mkdir build
     - cd build
     - conan install .. --build outdated
-    - cmake -DBUILD_TESTS=ON ..
+    - cmake -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON ..
     - make
   artifacts:
     paths:
@@ -38,15 +38,15 @@ stages:
 .build_windows_msvc: &build_windows_msvc
   stage: build
   before_script:
-    - $setupEnv = (python3 scripts/ci-before.py setup-env) | Out-String
+    - $setupEnv = (python3 scripts/ci.py setup-env) | Out-String
     - Invoke-Expression $setupEnv
-    - python3 scripts/ci-before.py init
-    - python3 scripts/ci-before.py clean-conan-testing
+    - python3 scripts/ci.py init
+    - python3 scripts/ci.py clean-conan-testing
   script:
     - mkdir build
     - cd build
     - conan install .. --build outdated
-    - cmake -DBUILD_TESTS=ON -G "$env:VISUAL_STUDIO_VERSION Win64" -D "CMAKE_GENERATOR_TOOLSET=$env:VISUAL_STUDIO_TOOLSET" ..
+    - cmake -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON -G "$env:VISUAL_STUDIO_VERSION Win64" -D "CMAKE_GENERATOR_TOOLSET=$env:VISUAL_STUDIO_TOOLSET" ..
     - cmake --build . --config Release
   artifacts:
     paths:
@@ -64,9 +64,9 @@ stages:
 .test_windows_msvc: &test_windows_msvc
   stage: test
   before_script:
-    - $setupEnv = (python3 scripts/ci-before.py setup-env) | Out-String
+    - $setupEnv = (python3 scripts/ci.py setup-env) | Out-String
     - Invoke-Expression $setupEnv
-    - python3 scripts/ci-before.py init
+    - python3 scripts/ci.py init
   script:
     - cd build
     - conan install ..
@@ -78,8 +78,8 @@ stages:
 .package_build_unix: &package_build_unix
   stage: package:build
   before_script:
-    - "`python3 scripts/ci-before.py setup-env`"
-    - python3 scripts/ci-before.py init
+    - "`python3 scripts/ci.py setup-env`"
+    - python3 scripts/ci.py init
   script:
     - if [ -f "scripts/ci-conan-build.py" ]; then python3 scripts/ci-conan-build.py; else conan create -tf tests/conan . $CONAN_USERNAME/$CONAN_CHANNEL; fi
   artifacts:
@@ -91,9 +91,9 @@ stages:
 .package_build_windows: &package_build_windows
   stage: package:build
   before_script:
-    - $setupEnv = (python3 scripts/ci-before.py setup-env) | Out-String
+    - $setupEnv = (python3 scripts/ci.py setup-env) | Out-String
     - Invoke-Expression $setupEnv
-    - python3 scripts/ci-before.py init
+    - python3 scripts/ci.py init
   script:
     - If (Test-Path "scripts/ci-conan-build.py") { python3 scripts/ci-conan-build.py } Else { conan create -tf tests/conan . "$($env:CONAN_USERNAME)/$($env:CONAN_CHANNEL)" }
   artifacts:
@@ -105,8 +105,8 @@ stages:
 .package_upload_unix: &package_upload_unix
   stage: package:upload
   before_script:
-    - "`python3 scripts/ci-before.py setup-env`"
-    -  python3 scripts/ci-before.py init
+    - "`python3 scripts/ci.py setup-env`"
+    -  python3 scripts/ci.py init
   script:
     - conan upload $CONAN_REFERENCE@$CONAN_USERNAME/$CONAN_CHANNEL --all --force --remote $CONAN_REMOTE_NAME
   retry: 2
@@ -117,9 +117,9 @@ stages:
 .package_upload_windows: &package_upload_windows
   stage: package:upload
   before_script:
-    - $setupEnv = (python3 scripts/ci-before.py setup-env) | Out-String
+    - $setupEnv = (python3 scripts/ci.py setup-env) | Out-String
     - Invoke-Expression $setupEnv
-    - python3 scripts/ci-before.py init
+    - python3 scripts/ci.py init
   script:
     - conan upload "$($env:CONAN_REFERENCE)@$($env:CONAN_USERNAME)/$($env:CONAN_CHANNEL)" --all --force --remote "$($env:CONAN_REMOTE_NAME)"
   retry: 2
@@ -130,9 +130,9 @@ stages:
 .build_release_unix_make: &build_release_unix_make
   stage: build:release
   before_script:
-    - "`python3 scripts/ci-before.py setup-env`"
-    -  python3 scripts/ci-before.py init
-    -  python3 scripts/ci-before.py clean-conan-testing
+    - "`python3 scripts/ci.py setup-env`"
+    -  python3 scripts/ci.py init
+    -  python3 scripts/ci.py clean-conan-testing
   script:
     - mkdir build
     - cd build
@@ -156,10 +156,10 @@ stages:
 .build_release_windows_msvc: &build_release_windows_msvc
   stage: build:release
   before_script:
-    - $setupEnv = (python3 scripts/ci-before.py setup-env) | Out-String
+    - $setupEnv = (python3 scripts/ci.py setup-env) | Out-String
     - Invoke-Expression $setupEnv
-    - python3 scripts/ci-before.py init
-    - python3 scripts/ci-before.py clean-conan-testing
+    - python3 scripts/ci.py init
+    - python3 scripts/ci.py clean-conan-testing
   script:
     - mkdir build
     - cd build
@@ -188,9 +188,9 @@ stages:
 .test_release_windows_msvc: &test_release_windows_msvc
   stage: test:release
   before_script:
-    - $setupEnv = (python3 scripts/ci-before.py setup-env) | Out-String
+    - $setupEnv = (python3 scripts/ci.py setup-env) | Out-String
     - Invoke-Expression $setupEnv
-    - python3 scripts/ci-before.py init
+    - python3 scripts/ci.py init
   script:
     - cd build
     - conan install ..

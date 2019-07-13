@@ -118,7 +118,7 @@ def setupSettingsEnv():
 					for k, v in d.items():
 						if isinstance(v, dict):
 							if root != '':
-								toEnv(v, k + "_" + root)
+								toEnv(v, root + "_" + k)
 							else:
 								toEnv(v, k)
 						else:

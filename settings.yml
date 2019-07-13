@@ -11,4 +11,4 @@ conan:
   settings:
     compiler:
       cppstd: 11
-      libcxx: libc++11
+      libcxx: libstdc++11
